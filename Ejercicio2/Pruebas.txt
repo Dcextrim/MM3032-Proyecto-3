@@ -1,0 +1,8 @@
+% --- CONSULTAS DE PRUEBA (comentadas) ---
+% ?- camino(a, d, Y).        % Esperado: Y = [a,d] ; Y = [a,c,d]
+% ?- camino(c, d, Y).        % Esperado: Y = [c,d]
+% ?- camino(X, d, Y).        % Esperado: (X,Y) = (a,[a,d]) ; (a,[a,c,d]) ; (c,[c,d])
+
+% Para listar sin duplicados en una sola lista:
+% ?- setof((X,Y), camino(X, d, Y), Sols).
+%    Sols = [(a,[a,d]),(a,[a,c,d]),(c,[c,d])]

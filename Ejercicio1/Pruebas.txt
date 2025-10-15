@@ -1,0 +1,81 @@
+padre(P, daniel).
+madre(M, daniel).
+abuelo(A, daniel).
+abuela(A, daniel).
+hermano(H, daniel).
+tia(T, daniel).
+tio(T, daniel).
+primo(P, daniel).
+prima(P, daniel).
+nieto(N, maura).
+nieta(N, maura).
+
+
+setof(T, tio(T, daniel), Ts).
+setof(T, tia(T, daniel), Ts).
+setof(P, primo(P, daniel), PV).
+setof(P, prima(P, daniel), PM).
+setof(N, nieto(N, maura), Ns).
+
+
+% Tíos únicos (incluye políticos)
+setof(T, tio(T, daniel), Ts), maplist(writeln, Ts).
+
+% Tías únicas (incluye políticas)
+setof(T, tia(T, daniel), Ts), maplist(writeln, Ts).
+
+% Primos/primas en listas sin repetir
+setof(P, primo(P, daniel), PV).
+setof(P, prima(P, daniel), PM).
+
+% Enumerar sin duplicados (retroceso) usando distinct/2
+use_module(library(solution_sequences)).
+distinct(T, tio(T, daniel)).
+distinct(T, tia(T, daniel)).
+distinct(P, primo(P, daniel)).
+distinct(P, prima(P, daniel)).
+distinct(N, nieto(N, maura)).
+
+?- setof(C,
+         ( primo_o_prima(C, daniel),
+           progenitor(Pc, C),
+           madre(M, daniel),
+           (hermano(Pc, M) ; hermana(Pc, M)) ),
+         Maternos).
+
+?- setof(C,
+         ( hombre(C),
+           progenitor(Pc, C),
+           madre(M, daniel),
+           (hermano(Pc, M) ; hermana(Pc, M)) ),
+         PrimosMaternos).
+
+?- setof(C,
+         ( mujer(C),
+           progenitor(Pc, C),
+           madre(M, daniel),
+           (hermano(Pc, M) ; hermana(Pc, M)) ),
+         PrimasMaternas).
+
+PRIMOS PATERNOS
+
+?- setof(C,
+         ( primo_o_prima(C, daniel),
+           progenitor(Pc, C),
+           padre(Pa, daniel),
+           (hermano(Pc, Pa) ; hermana(Pc, Pa)) ),
+         Paternos).
+
+?- setof(C,
+         ( hombre(C),
+           progenitor(Pc, C),
+           padre(Pa, daniel),
+           (hermano(Pc, Pa) ; hermana(Pc, Pa)) ),
+         PrimosPaternos).
+
+?- setof(C,
+         ( mujer(C),
+           progenitor(Pc, C),
+           padre(Pa, daniel),
+           (hermano(Pc, Pa) ; hermana(Pc, Pa)) ),
+         PrimasPaternas).
