@@ -1,9 +1,10 @@
-% =========================
-% Ejercicio1.pl — Árbol genealógico (Daniel)
-% con primos/primas, nietos/nietas y tíos/tías políticos
-% =========================
+% ------------------------------------
+%  Ejercicio1.pl — Árbol Genealógico
+% ------------------------------------
 
-% --- HECHOS: sexo (agrupados) ---
+% HECHOS: Un predicado (relación) entre objetos.
+
+% 1. Mujeres -> Relación: <nombre> es mujer
 
 mujer(maura).
 mujer(patty).
@@ -17,6 +18,10 @@ mujer(jocabed).
 mujer(katty).
 mujer(isabella).
 mujer(narnell).
+
+
+
+% 2. Hombres -> Relación: <nombre> es hombre
 
 hombre(jose_adan).
 hombre(luis).
@@ -34,9 +39,12 @@ hombre(dario).
 hombre(obsdy).
 hombre(randall).
 
-% --- HECHOS: relaciones de progenitor ---
 
-% Abuelos maternos -> hijos
+
+% 3. Progenitores -> Relación: <nombre> es progenitor de <nombre>
+
+% Abuelos Maternos --------------------
+
 progenitor(maura, luis).
 progenitor(jose_adan, luis).
 progenitor(maura, pablo).
@@ -46,7 +54,8 @@ progenitor(jose_adan, patty).
 progenitor(maura, elizabeth).
 progenitor(jose_adan, elizabeth).
 
-% Parejas de los tíos maternos y sus hijos
+% Tíos maternos --------------------
+
 progenitor(luis, lidia).
 progenitor(karen, lidia).
 progenitor(luis, nicole).
@@ -60,13 +69,15 @@ progenitor(jeffrey, connor).
 progenitor(patty, asa).
 progenitor(jeffrey, asa).
 
-% Padres de Daniel y David
+% Padres ------------------------------
+
 progenitor(elizabeth, daniel).
 progenitor(oscar, daniel).
 progenitor(elizabeth, david).
 progenitor(oscar, david).
 
-% Abuelos paternos -> hijos
+% Abuelos Paternos --------------------
+
 progenitor(virginia, tonito).
 progenitor(antonio, tonito).
 progenitor(virginia, jocabed).
@@ -74,7 +85,8 @@ progenitor(antonio, jocabed).
 progenitor(virginia, oscar).
 progenitor(antonio, oscar).
 
-% Parejas de los tíos paternos y sus hijos
+% Tíos Paternos --------------------
+
 progenitor(tonito, obsdy).
 progenitor(katty, obsdy).
 progenitor(tonito, randall).
@@ -85,224 +97,430 @@ progenitor(katty, narnell).
 progenitor(jocabed, isabella).
 progenitor(dario, isabella).
 
-% --- HECHOS: matrimonios ---
-% Representa relaciones conyugales en dirección única para normalización.
-% Ver conyuge/2 para consultas simétricas.
 
-% Abuelos
-matrimonio(maura, jose_adan).
-matrimonio(virginia, antonio).
 
-% Padres y tíos
-matrimonio(luis, karen).
-matrimonio(pablo, claudia).
-matrimonio(patty, jeffrey).
-matrimonio(oscar, elizabeth).
-matrimonio(tonito, katty).
-matrimonio(jocabed, dario).
+% 4. Padre -> Relación: <nombre> es padre de <nombre>
 
-% conyuge/2
-% Predicado simétrico derivado de matrimonio/2.
-% @param X Primer individuo
-% @param Y Segundo individuo
-% @return true si existe matrimonio(X,Y) ∨ matrimonio(Y,X)
-% Implementa la propiedad conmutativa sobre matrimonio/2.
+% Abuelos Maternos --------------------
 
-conyuge(X, Y) :- matrimonio(X, Y).
-conyuge(X, Y) :- matrimonio(Y, X).
+padre(jose_adan, luis).
+padre(jose_adan, pablo).
+padre(jose_adan, patty).
+padre(jose_adan, elizabeth).
 
-% --- REGLAS DERIVADAS BÁSICAS ---
-% Especialización de progenitor/2 por género.
+% Tíos maternos --------------------
 
-% padre/2
-% @param P Progenitor masculino
-% @param H Descendiente
-% @satisfies progenitor(P, H) ∧ hombre(P)
-padre(P, H)  :- progenitor(P, H), hombre(P).
+padre(luis, lidia).
+padre(luis, nicole).
 
-% madre/2
-% @param M Progenitor femenino
-% @param H Descendiente
-% @satisfies progenitor(M, H) ∧ mujer(M)
-madre(M, H)  :- progenitor(M, H), mujer(M).
+padre(pablo, pablito).
 
-% hijo/2
-% @param H Descendiente masculino
-% @param P Progenitor
-% @satisfies progenitor(P, H) ∧ hombre(H)
-hijo(H, P)   :- progenitor(P, H), hombre(H).
+padre(jeffrey, connor).
+padre(jeffrey, asa).
 
-% hija/2
-% @param H Descendiente femenino
-% @param P Progenitor
-% @satisfies progenitor(P, H) ∧ mujer(H)
-hija(H, P)   :- progenitor(P, H), mujer(H).
+% Padres ------------------------------
 
-% --- RELACIONES DE HERMANDAD ---
-% Relación simétrica entre individuos con al menos un progenitor común.
+padre(oscar, daniel).
+padre(oscar, david).
 
-% hermano/2
-% @param X Individuo masculino
-% @param Y Co-descendiente
-% @satisfies ∃P(progenitor(P,X) ∧ progenitor(P,Y) ∧ X≠Y ∧ hombre(X))
-hermano(X, Y) :-
-    progenitor(P, X),
-    progenitor(P, Y),
-    X \= Y,
-    hombre(X).
+% Abuelos Paternos --------------------
 
-% hermana/2
-% @param X Individuo femenino
-% @param Y Co-descendiente
-% @satisfies ∃P(progenitor(P,X) ∧ progenitor(P,Y) ∧ X≠Y ∧ mujer(X))
-hermana(X, Y) :-
-    progenitor(P, X),
-    progenitor(P, Y),
-    X \= Y,
-    mujer(X).
+padre(antonio, tonito).
+padre(antonio, jocabed).
+padre(antonio, oscar).
 
-% --- RELACIONES DE SEGUNDA GENERACIÓN: ABUELOS ---
-% Relación transitiva sobre progenitor/2 (composición de funciones).
+% Tíos Paternos --------------------
 
-% abuelo/2
-% @param A Progenitor de segundo orden masculino
-% @param N Descendiente de segundo orden
-% @satisfies ∃P(progenitor(A,P) ∧ progenitor(P,N) ∧ hombre(A))
-abuelo(A, N)  :- hombre(A), progenitor(A, P), progenitor(P, N).
+padre(tonito, obsdy).
+padre(tonito, randall).
+padre(tonito, narnell).
 
-% abuela/2
-% @param A Progenitor de segundo orden femenino
-% @param N Descendiente de segundo orden
-% @satisfies ∃P(progenitor(A,P) ∧ progenitor(P,N) ∧ mujer(A))
-abuela(A, N)  :- mujer(A),  progenitor(A, P), progenitor(P, N).
+padre(dario, isabella).
 
-% --- RELACIONES COLATERALES DE PRIMER GRADO ---
-% Categorización: consanguínea (hermano de progenitor) y afín (cónyuge de consanguíneo).
 
-% tio_consang/2
-% Relación masculina colateral consanguínea.
-% @param T Hermano masculino de progenitor
-% @param S Individuo de referencia
-% @satisfies ∃P(progenitor(P,S) ∧ hermano(T,P) ∧ hombre(T))
-tio_consang(T, S) :-
-    hombre(T),
-    progenitor(P, S),
-    hermano(T, P).
 
-% tia_consang/2
-% Relación femenina colateral consanguínea.
-% @param T Hermana femenina de progenitor
-% @param S Individuo de referencia
-% @satisfies ∃P(progenitor(P,S) ∧ hermana(T,P) ∧ mujer(T))
-tia_consang(T, S) :-
-    mujer(T),
-    progenitor(P, S),
-    hermana(T, P).
+% 5. Madre -> Relación: <nombre> es madre de <nombre>
 
-% tio_politico/2
-% Relación masculina colateral por afinidad.
-% @param T Cónyuge masculino de hermana de progenitor
-% @param S Individuo de referencia
-% @satisfies ∃P,A(progenitor(P,S) ∧ hermana(A,P) ∧ conyuge(T,A) ∧ hombre(T))
-tio_politico(T, S) :-
-    hombre(T),
-    progenitor(P, S),
-    hermana(A, P),
-    conyuge(T, A).
+% Abuelos Maternos --------------------
 
-% tia_politica/2
-% Relación femenina colateral por afinidad.
-% @param T Cónyuge femenino de hermano de progenitor
-% @param S Individuo de referencia
-% @satisfies ∃P,A(progenitor(P,S) ∧ hermano(A,P) ∧ conyuge(T,A) ∧ mujer(T))
-tia_politica(T, S) :-
-    mujer(T),
-    progenitor(P, S),
-    hermano(A, P),
-    conyuge(T, A).
+madre(maura, luis).
+madre(maura, pablo).
+madre(maura, patty).
+madre(maura, elizabeth).
 
-% tio/2, tia/2
-% Predicados unificados: disyunción de relaciones consanguíneas y afines.
-% @return true si tio_consang(T,S) ∨ tio_politico(T,S)
-tio(T, S) :- tio_consang(T, S).
-tio(T, S) :- tio_politico(T, S).
+% Tíos maternos --------------------
 
-tia(T, S) :- tia_consang(T, S).
-tia(T, S) :- tia_politica(T, S).
+madre(karen, lidia).
+madre(karen, nicole).
 
-% --- RELACIONES INVERSAS: SOBRINOS/SOBRINAS ---
-% Relación inversa de tio/2 y tia/2.
+madre(claudia, pablito).
 
-% sobrino/2
-% @param S Individuo masculino
-% @param T Tío o tía de S
-% @satisfies hombre(S) ∧ (tio(T,S) ∨ tia(T,S))
-sobrino(S, T) :- hombre(S), (tio(T, S) ; tia(T, S)).
+madre(patty, connor).
+madre(patty, asa).
 
-% sobrina/2
-% @param S Individuo femenino
-% @param T Tío o tía de S
-% @satisfies mujer(S) ∧ (tio(T,S) ∨ tia(T,S))
-sobrina(S, T) :- mujer(S),  (tio(T, S) ; tia(T, S)).
+% Padres ------------------------------
 
-% --- RELACIONES COLATERALES DE SEGUNDO GRADO ---
-% Individuos cuyos progenitores son hermanos entre sí.
+madre(elizabeth, daniel).
+madre(elizabeth, david).
 
-% primo/2
-% @param X Individuo masculino
-% @param Y Co-descendiente de hermano de progenitor
-% @satisfies ∃PX,PY(progenitor(PX,X) ∧ progenitor(PY,Y) ∧ 
-%            (hermano(PX,PY) ∨ hermana(PX,PY)) ∧ hombre(X))
-primo(X, Y) :-
-    progenitor(PX, X),
-    progenitor(PY, Y),
-    (hermano(PX, PY) ; hermana(PX, PY)),
-    hombre(X).
+% Abuelos Paternos --------------------
 
-% prima/2
-% @param X Individuo femenino
-% @param Y Co-descendiente de hermano de progenitor
-% @satisfies ∃PX,PY(progenitor(PX,X) ∧ progenitor(PY,Y) ∧ 
-%            (hermano(PX,PY) ∨ hermana(PX,PY)) ∧ mujer(X))
-prima(X, Y) :-
-    progenitor(PX, X),
-    progenitor(PY, Y),
-    (hermano(PX, PY) ; hermana(PX, PY)),
-    mujer(X).
+madre(virginia, tonito).
+madre(virginia, jocabed).
+madre(virginia, oscar).
 
-% primo_o_prima/2
-% Predicado no especializado por género.
-% @satisfies ∃PX,PY(progenitor(PX,X) ∧ progenitor(PY,Y) ∧ 
-%            (hermano(PX,PY) ∨ hermana(PX,PY)))
-primo_o_prima(X, Y) :-
-    progenitor(PX, X),
-    progenitor(PY, Y),
-    (hermano(PX, PY) ; hermana(PX, PY)).
+% Tíos Paternos --------------------
 
-% --- RELACIONES INVERSAS DE SEGUNDA GENERACIÓN: NIETOS ---
-% Relación inversa de abuelo/2 y abuela/2.
+madre(katty, obsdy).
+madre(katty, randall).
+madre(katty, narnell).
 
-% nieto/2
-% @param N Descendiente de segundo orden masculino
-% @param A Progenitor de segundo orden
-% @satisfies ∃P(progenitor(A,P) ∧ progenitor(P,N) ∧ hombre(N))
-nieto(N, A) :-
-    hombre(N),
-    progenitor(A, P),
-    progenitor(P, N).
+madre(jocabed, isabella).
 
-% nieta/2
-% @param N Descendiente de segundo orden femenino
-% @param A Progenitor de segundo orden
-% @satisfies ∃P(progenitor(A,P) ∧ progenitor(P,N) ∧ mujer(N))
-nieta(N, A) :-
-    mujer(N),
-    progenitor(A, P),
-    progenitor(P, N).
 
-% nieto_o_nieta/2
-% Predicado no especializado por género.
-% @satisfies ∃P(progenitor(A,P) ∧ progenitor(P,N))
-nieto_o_nieta(N, A) :-
-    progenitor(A, P),
-    progenitor(P, N).
+
+% 6. Hijo -> Relación: <nombre> es hijo de <nombre>
+
+% Abuelos Maternos --------------------
+
+hijo(luis, maura).
+hijo(luis, jose_adan).
+hijo(pablo, maura).
+hijo(pablo, jose_adan).
+
+% Tíos maternos --------------------
+
+hijo(pablito, claudia).
+hijo(pablito, pablo).
+
+hijo(connor, patty).
+hijo(asa, jeffrey).
+
+% Padres ------------------------------
+
+hijo(daniel, elizabeth).
+hijo(daniel, oscar).
+hijo(david, elizabeth).
+hijo(david, oscar).
+
+% Abuelos Paternos --------------------
+
+hijo(tonito, virginia).
+hijo(tonito, antonio).
+hijo(oscar, virginia).
+hijo(oscar, antonio).
+
+% Tíos Paternos --------------------
+
+hijo(obsdy, katty).
+hijo(obsdy, tonito).
+hijo(randall, katty).
+hijo(randall, tonito).
+
+
+
+% 7. Hija -> Relación: <nombre> es hija de <nombre>
+
+% Abuelos Maternos --------------------
+
+hija(patty, maura).
+hija(patty, jose_adan).
+hija(elizabeth, maura).
+hija(elizabeth, jose_adan).
+
+% Tíos maternos --------------------
+
+hija(lidia, karen).
+hija(lidia, luis).
+hija(nicole, karen).
+hija(nicole, luis).
+
+% Abuelos Paternos --------------------
+
+hija(jocabed, virginia).
+hija(jocabed, antonio).
+
+% Tíos Paternos --------------------
+
+hija(narnell, katty).
+hija(narnell, tonito).
+
+hija(isabella, jocabed).
+hija(isabella, dario).
+
+
+
+% 8. Abuelo -> Relación: <nombre> es abuelo de <nombre>
+
+% Abuelos Maternos --------------------
+
+abuelo(jose_adan, lidia).
+abuelo(jose_adan, nicole).
+abuelo(jose_adan, pablito).
+abuelo(jose_adan, connor).
+abuelo(jose_adan, asa).
+abuelo(jose_adan, daniel).
+abuelo(jose_adan, david).
+
+% Abuelos Paternos --------------------
+
+abuelo(antonio, obsdy).
+abuelo(antonio, randall).
+abuelo(antonio, narnell).
+abuelo(antonio, isabella).
+abuelo(antonio, daniel).
+abuelo(antonio, david).
+
+
+
+% 9. Abuela -> Relación: <nombre> es abuela de <nombre>
+
+% Abuelos Maternos --------------------
+
+abuela(maura, lidia).
+abuela(maura, nicole).
+abuela(maura, pablito).
+abuela(maura, connor).
+abuela(maura, asa).
+abuela(maura, daniel).
+abuela(maura, david).
+
+% Abuelos Paternos --------------------
+
+abuela(virginia, obsdy).
+abuela(virginia, randall).
+abuela(virginia, narnell).
+abuela(virginia, isabella).
+abuela(virginia, daniel).
+abuela(virginia, david).
+
+
+
+% 10. Hermano -> Relación: <nombre> es hermano de <nombre>
+
+% Abuelos Maternos --------------------
+
+hermano(luis, pablo).
+hermano(luis, patty).
+hermano(luis, elizabeth).
+hermano(pablo, luis).
+hermano(pablo, patty).
+hermano(pablo, elizabeth).
+
+% Tíos maternos --------------------
+
+hermano(connor, asa).
+hermano(asa, connor).
+
+% Padres ------------------------------
+
+hermano(daniel, david).
+hermano(david, daniel).
+
+% Abuelos Paternos --------------------
+
+hermano(tonito, jocabed).
+hermano(tonito, oscar).
+hermano(oscar, tonito).
+hermano(oscar, jocabed).
+
+% Tíos Paternos --------------------
+
+hermano(obsdy, randall).
+hermano(obsdy, narnell).
+hermano(randall, obsdy).
+hermano(randall, narnell).
+
+
+
+% 11. Hermana -> Relación: <nombre> es hermana de <nombre>
+
+% Abuelos Maternos --------------------
+
+hermana(patty, luis).
+hermana(patty, pablo).
+hermana(patty, elizabeth).
+hermana(elizabeth, luis).
+hermana(elizabeth, pablo).
+hermana(elizabeth, patty).
+
+% Tíos maternos --------------------
+
+hermana(lidia, nicole).
+hermana(nicole, lidia).
+
+% Abuelos Paternos --------------------
+
+hermana(jocabed, tonito).
+hermana(jocabed, oscar).
+
+% Tíos Paternos --------------------
+
+hermana(narnell, obsdy).
+hermana(narnell, randall).
+
+
+
+% 12. Tío -> Relación: <nombre> es tío de <nombre>
+
+% Tíos maternos --------------------
+
+tio(luis, pablito).
+tio(luis, connor).
+tio(luis, asa).
+tio(luis, daniel).
+tio(luis, david).
+
+tio(pablo, lidia).
+tio(pablo, nicole).
+tio(pablo, connor).
+tio(pablo, asa).
+tio(pablo, daniel).
+tio(pablo, david).
+
+% Padres ------------------------------
+
+tio(oscar, obsdy).
+tio(oscar, randall).
+tio(oscar, narnell).
+tio(oscar, isabella).
+
+% Tíos Paternos --------------------
+
+tio(tonito, isabella).
+tio(tonito, daniel).
+tio(tonito, david).
+
+
+
+% 13. Tía -> Relación: <nombre> es tía de <nombre>
+
+% Tíos maternos --------------------
+
+tia(patty, lidia).
+tia(patty, nicole).
+tia(patty, pablito).
+tia(patty, daniel).
+tia(patty, david).
+
+% Padres ------------------------------
+
+tia(elizabeth, lidia).
+tia(elizabeth, nicole).
+tia(elizabeth, pablito).
+tia(elizabeth, connor).
+tia(elizabeth, asa).
+
+% Tíos Paternos --------------------
+
+tia(jocabed, obsdy).
+tia(jocabed, randall).
+tia(jocabed, narnell).
+tia(jocabed, daniel).
+tia(jocabed, david).
+
+
+
+% 14. Primo -> Relación: <nombre> es primo de <nombre>
+
+% Tíos maternos --------------------
+
+primo(pablito, lidia).
+primo(pablito, nicole).
+primo(pablito, connor).
+primo(pablito, asa).
+primo(pablito, daniel).
+primo(pablito, david).
+
+primo(connor, lidia).
+primo(connor, nicole).
+primo(connor, pablito).
+primo(connor, daniel).
+primo(connor, david).
+primo(asa, lidia).
+primo(asa, nicole).
+primo(asa, pablito).
+primo(asa, daniel).
+primo(asa, david).
+
+% Padres ------------------------------
+
+primo(daniel, lidia).
+primo(daniel, nicole).
+primo(daniel, pablito).
+primo(daniel, connor).
+primo(daniel, asa).
+primo(david, lidia).
+primo(david, nicole).
+primo(david, pablito).
+primo(david, connor).
+primo(david, asa).
+
+primo(daniel, obsdy).
+primo(daniel, randall).
+primo(daniel, narnell).
+primo(daniel, isabella).
+primo(david, obsdy).
+primo(david, randall).
+primo(david, narnell).
+primo(david, isabella).
+
+% Tíos Paternos --------------------
+
+primo(obsdy, isabella).
+primo(obsdy, daniel).
+primo(obsdy, david).
+primo(randall, isabella).
+primo(randall, daniel).
+primo(randall, david).
+
+
+
+% 15. Prima -> Relación: <nombre> es prima de <nombre>
+
+% Tíos maternos --------------------
+
+prima(lidia, pablito).
+prima(lidia, connor).
+prima(lidia, asa).
+prima(lidia, daniel).
+prima(lidia, david).
+prima(nicole, pablito).
+prima(nicole, connor).
+prima(nicole, asa).
+prima(nicole, daniel).
+prima(nicole, david).
+
+% Tíos Paternos --------------------
+
+prima(narnell, isabella).
+prima(narnell, daniel).
+prima(narnell, david).
+
+prima(isabella, obsdy).
+prima(isabella, randall).
+prima(isabella, narnell).
+prima(isabella, daniel).
+prima(isabella, david).
+
+
+
+% --------------------| COMO REGLAS |--------------------
+
+% padre(X, Y) :- hombre(X), progenitor(X, Y).
+% madre(X, Y) :- mujer(X), progenitor(X, Y).
+
+% hijo(X, Y) :- hombre(X), progenitor(Y, X).
+% hija(X, Y) :- mujer(X), progenitor(Y, X).
+
+% abuelo(X, Y) :- hombre(X), progenitor(X, Z), progenitor(Z, Y).
+% abuela(X, Y) :- mujer(X), progenitor(X, Z), progenitor(Z, Y).
+
+% hermano(X, Y) :- hombre(X), progenitor(Z, X), progenitor(Z, Y), X \= Y.
+% hermana(X, Y) :- mujer(X), progenitor(Z, X), progenitor(Z, Y), X \= Y.
+
+% tio(X, Y) :- hermano(X, Z), progenitor(Z, Y).
+% tia(X, Y) :- hermana(X, Z), progenitor(Z, Y).
+
+% primo(X, Y) :- tio(Z, Y), progenitor(Z, X).
+% prima(X, Y) :-  tia(Z, Y), progenitor(Z, X).
