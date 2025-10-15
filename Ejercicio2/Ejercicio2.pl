@@ -1,46 +1,30 @@
-% ==============================================
-% Ejercicio2.pl — Caminos en un grafo dirigido
-% Grafo: nodos {a,b,c,d}, arcos {(a,b),(a,c),(a,d),(c,d)}
-% ==============================================
+% ------------------------------------
+%  Ejercicio2.pl — Grafo Dirigido
+% ------------------------------------
 
-% --- Nodos y arcos ---
-nodo(a). nodo(b). nodo(c). nodo(d).
+% Representación del grafo dirigido --------------------
 
-arco(a,b).
-arco(a,c).
-arco(a,d).
-arco(c,d).
+% 1. Definición de los arcos del grafo
 
-% --- Utilidades de listas (definidas aquí para evitar dependencias) ---
-% member/2
-member(X, [X|_]).
-member(X, [_|T]) :- member(X, T).
+arco(a, b).
+arco(a, c).
+arco(a, d).
+arco(c, d).
 
-% append/3
-append([], L, L).
-append([H|T], L, [H|R]) :- append(T, L, R).
+% 2. Definición de nodos (se pueden inferir de los arcos) 
 
-% no_member/2 (sin negación; usa desigualdad estructural)
-no_member(_, []).
-no_member(X, [H|T]) :- X \= H, no_member(X, T).
+es_nodo(X) :- arco(X, _).
+es_nodo(X) :- arco(_, X).
 
-% ----------------------------------------------
-% Camino con control de "visitados"
-% Construye el camino en orden natural (X ... Y) sin reverse/2
-% ----------------------------------------------
-camino(X, Y, Camino) :-
-    nodo(X), nodo(Y),
-    camino(X, Y, [X], Camino).
 
-% Caso base: Actual -> Destino (arco directo)
-camino(Actual, Destino, Visitados, Camino) :-
-    arco(Actual, Destino),
-    append(Visitados, [Destino], Camino).
+% Predicado camino(+Origen, +Destino, -Camino) --------------------
 
-% Paso recursivo: Actual -> Siguiente, Siguiente aún no visitado
-camino(Actual, Destino, Visitados, Camino) :-
-    arco(Actual, Siguiente),
-    no_member(Siguiente, Visitados),
-    append(Visitados, [Siguiente], Visitados1),
-    camino(Siguiente, Destino, Visitados1, Camino).
+% 1. Caso base: Si hay un arco directo entre Origen y Destino el camino es [Origen, Destino]
 
+camino(Origen, Destino, [Origen, Destino]) :- arco(Origen, Destino).
+
+% 2. Caso recursivo: Si existe un nodo intermedio el camino incluye el nodo intermedio y el resto del camino
+
+camino(Origen, Destino, [Origen|RestoCamino]) :-
+    arco(Origen, Intermedio),
+    camino(Intermedio, Destino, RestoCamino).
